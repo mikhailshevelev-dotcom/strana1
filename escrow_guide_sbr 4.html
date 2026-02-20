@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Этапы сделки — Страна</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700&family=Golos+Text:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blueberry: #3B2D6E;
+    --blueberry-light: #5A4A9F;
+    --blueberry-mid: #7B6BC4;
+    --blueberry-pale: #EAE7F7;
+    --blueberry-ultra: #F4F2FC;
+    --graphite: #2C2C2E;
+    --graphite-mid: #636366;
+    --graphite-pale: #8E8E93;
+    --bg: #F7F6F2;
+    --surface: #FFFFFF;
+    --border: #E5E2F0;
+    --text: #1C1C1E;
+    --text-soft: #48484A;
+    --done: #28A745;
+    --done-bg: #EDFBF1;
+    --done-border: #B7EAC7;
+    --warn: #D4720A;
+    --warn-bg: #FFF4E5;
+    --warn-border: #FFD8A0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Golos Text', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .hero {
+    background: linear-gradient(135deg, var(--blueberry) 0%, var(--blueberry-light) 100%);
+    padding: 44px 24px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
+    top: -70px; right: -70px;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 70%);
+    bottom: -50px; left: 10px;
+  }
+  .logo { display: block; height: auto; margin-bottom: 20px; position: relative; z-index: 1; }
+  .brand {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+    color: #fff;
+  }
+  .hero-tagline {
+    font-size: 15px;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.4;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 1;
+    font-weight: 500;
+  }
+  .hero-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.5;
+    position: relative;
+    z-index: 1;
+  }
+
+  .progress-bar {
+    background: var(--surface);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 1px 6px rgba(59,45,110,0.06);
+  }
+  .progress-track {
+    flex: 1;
+    height: 5px;
+    background: var(--blueberry-pale);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blueberry-mid), var(--done));
+    border-radius: 3px;
+    transition: width 0.5s cubic-bezier(.4,0,.2,1);
+    width: 0%;
+  }
+  .progress-label {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 11px;
+    color: var(--graphite-pale);
+    white-space: nowrap;
+  }
+
+  .steps {
+    padding: 20px 16px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .step-card {
+    background: var(--surface);
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1.5px solid var(--border);
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 4px rgba(59,45,110,0.04);
+  }
+  .step-card.open {
+    border-color: var(--blueberry-mid);
+    box-shadow: 0 4px 20px rgba(59,45,110,0.1);
+  }
+  .step-card.done {
+    border-color: var(--done-border);
+    background: var(--done-bg);
+    box-shadow: none;
+  }
+
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .step-num {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    background: var(--blueberry-ultra);
+    border: 1.5px solid var(--blueberry-pale);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--blueberry);
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+  }
+  .step-card.open .step-num {
+    background: var(--blueberry);
+    border-color: var(--blueberry);
+    color: #fff;
+  }
+  .step-card.done .step-num {
+    background: var(--blueberry-ultra);
+    border-color: var(--blueberry-pale);
+    color: var(--blueberry);
+  }
+  .step-num .check { display: none; }
+  .step-card.done .step-num .num-text { display: none; }
+  .step-card.done .step-num .check { display: block; }
+
+  .step-title-wrap { flex: 1; }
+  .step-number-label {
+    font-size: 10px;
+    color: var(--graphite-pale);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 2px;
+  }
+  .step-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--text);
+  }
+  .step-card.done .step-title { color: var(--graphite-mid); }
+
+  .chevron {
+    color: var(--blueberry-mid);
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+  }
+  .step-card.open .chevron { transform: rotate(180deg); }
+  .step-card.done .chevron { color: var(--blueberry-mid); }
+
+  .step-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(.4,0,.2,1);
+  }
+  .step-card.open .step-body { max-height: 1400px; }
+
+  .step-content {
+    padding: 16px 18px 20px;
+    border-top: 1.5px solid var(--border);
+  }
+  .step-card.done .step-content { border-top-color: var(--done-border); }
+
+  .step-content p {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--text-soft);
+    margin-bottom: 12px;
+  }
+  .step-content p:last-of-type { margin-bottom: 0; }
+
+  .tip {
+    background: var(--blueberry-ultra);
+    border-left: 3px solid var(--blueberry-mid);
+    border-radius: 0 12px 12px 0;
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--text-soft);
+    margin-bottom: 12px;
+  }
+  .warn-tip {
+    background: var(--warn-bg);
+    border-left: 3px solid var(--warn);
+    border-radius: 0 12px 12px 0;
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--text-soft);
+    margin-bottom: 12px;
+  }
+  .warn-tip strong { color: var(--warn); display: block; margin-bottom: 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .tip strong { color: var(--blueberry); display: block; margin-bottom: 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .tag {
+    display: inline-block;
+    background: var(--blueberry-pale);
+    color: var(--blueberry);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .divider { height: 1px; background: var(--border); margin: 12px 0; }
+
+  .done-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px;
+    margin-top: 16px;
+    border-radius: 12px;
+    border: 1.5px solid var(--blueberry-pale);
+    background: var(--blueberry-ultra);
+    color: var(--blueberry);
+    font-family: 'Golos Text', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .done-btn:active { transform: scale(0.97); }
+  .step-card.done .done-btn {
+    background: var(--blueberry-ultra);
+    color: var(--blueberry);
+    border: 1.5px solid var(--blueberry-pale);
+    box-shadow: none;
+  }
+
+  .congrats {
+    display: none;
+    margin: 0 16px 40px;
+    background: linear-gradient(135deg, var(--blueberry), var(--blueberry-light));
+    border-radius: 24px;
+    padding: 32px 24px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(59,45,110,0.2);
+    animation: popIn 0.5s cubic-bezier(.175,.885,.32,1.275);
+  }
+  .congrats.show { display: block; }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.9) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .congrats-icon { font-size: 48px; margin-bottom: 16px; }
+  .congrats h2 { font-family: 'Unbounded', sans-serif; font-size: 20px; margin-bottom: 10px; color: #fff; }
+  .congrats p { font-size: 15px; color: rgba(255,255,255,0.75); line-height: 1.55; }
+  .congrats p + p { margin-top: 12px; font-size: 14px; color: rgba(255,255,255,0.6); }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <img class="logo" src="data:image/png;base64,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" alt="Страна">
+  <div class="brand">Страна Девелопмент</div>
+  <h1>Пошаговая инструкция по сделке</h1>
+  <p class="hero-tagline">Ознакомьтесь со всеми этапами сделки заранее</p>
+  <p class="hero-sub">Эскроу · СБР · Наличные / Рассрочка · Паркинг<br>Отмечайте выполненные шаги ↓</p>
+</div>
+
+<div class="progress-bar">
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <div class="progress-label" id="progressLabel">0 из 7</div>
+</div>
+
+<div class="steps">
+
+  <!-- 1 -->
+  <div class="step-card open" id="step-1">
+    <div class="step-header" onclick="toggle(1)">
+      <div class="step-num"><span class="num-text">1</span><span class="check">✓</span></div>
+      <div class="step-title-wrap">
+        <div class="step-number-label">Шаг 1</div>
+        <div class="step-title">Согласование ДДУ</div>
+      </div>
+      <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="step-body">
+      <div class="step-content">
+        <p>Юрист компании «Страна» направит договор ДДУ на вашу электронную почту для ознакомления.</p>
+        <p>Все вопросы и замечания по договору — адресуйте менеджеру по сопровождению сделки.</p>
+        <button class="done-btn" onclick="markDone(1)">✓ &nbsp;Выполнено</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2 -->
+  <div class="step-card" id="step-2">
+    <div class="step-header" onclick="toggle(2)">
+      <div class="step-num"><span class="num-text">2</span><span class="check">✓</span></div>
+      <div class="step-title-wrap">
+        <div class="step-number-label">Шаг 2</div>
+        <div class="step-title">Открытие эскроу счёта</div>
+      </div>
+      <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="step-body">
+      <div class="step-content">
+        <p>После назначения даты сделки юрист «Страны» зарезервирует эскроу счёт в Сбере на имя основного покупателя.</p>
+        <div class="divider"></div>
+        <span class="tag">Клиент Сбера</span>
+        <p>Откройте Сбербанк Онлайн → введите в поиске «эскроу» или перейдите по ссылке из SMS.</p>
+        <span class="tag">Не клиент Сбера</span>
+        <p>Обратитесь в отделение Сбербанка: откройте сберегательный счёт и установите приложение банка.</p>
+        <div class="warn-tip">
+          <strong>⚠️ Запрещено!</strong>
+          Вносить деньги напрямую на эскроу счёт до регистрации договора в Росреестре категорически запрещено!
+        </div>
+        <div class="tip">
+          <strong>🅿️ Паркинг / кладовая</strong>
+          Эскроу открывается на каждый объект отдельно — процедуру нужно пройти и по паркингу/кладовой.
+        </div>
+        <button class="done-btn" onclick="markDone(2)">✓ &nbsp;Выполнено</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 -->
+  <div class="step-card" id="step-3">
+    <div class="step-header" onclick="toggle(3)">
+      <div class="step-num"><span class="num-text">3</span><span class="check">✓</span></div>
+      <div class="step-title-wrap">
+        <div class="step-number-label">Шаг 3</div>
+        <div class="step-title">Оплата через СБР</div>
+      </div>
+      <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="step-body">
+      <div class="step-content">
+        <p>Денежные средства вносятся на СБР (Счёт Безопасных Расчётов) — не ранее даты подписания договора.</p>
+        <div class="tip">
+          <strong>🧾 Квитанция</strong>
+          Менеджер по сопровождению сделки сформирует для вас квитанцию на оплату.
+        </div>
+        <div class="tip">
+          <strong>📋 Как работает СБР</strong>
+          На эскроу счёт деньги поступают после раскрытия СБР — это происходит только после регистрации ДДУ в Росреестре.
+        </div>
+        <div class="warn-tip">
+          <strong>⚠️ Важно!</strong>
+          До момента регистрации ДДУ в Росреестре категорически запрещено вносить деньги напрямую на эскроу. Все средства вносятся только на СБР.
+        </div>
+        <button class="done-btn" onclick="markDone(3)">✓ &nbsp;Выполнено</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 -->
+  <div class="step-card" id="step-4">
+    <div class="step-header" onclick="toggle(4)">
+      <div class="step-num"><span class="num-text">4</span><span class="check">✓</span></div>
+      <div class="step-title-wrap">
+        <div class="step-number-label">Шаг 4</div>
+        <div class="step-title">Выпуск ЭЦП</div>
+      </div>
+      <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="step-body">
+      <div class="step-content">
+        <p>Менеджер пришлёт вам заявление на выпуск электронно-цифровой подписи (ЭЦП).</p>
+        <div class="tip">
+          <strong>📋 Ваши действия</strong>
+          Распечатайте → подпишите → отправьте скан менеджеру. Оригинал передайте в офис застройщика.
+        </div>
+        <p>Если вы находитесь в городе застройщика — можно подписать заявление лично в офисе.</p>
+        <p>Для активации ЭЦП установите специальное приложение. Менеджер пришлёт подробную памятку.</p>
+        <button class="done-btn" onclick="markDone(4)">✓ &nbsp;Выполнено</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 -->
+  <div class="step-card" id="step-5">
+    <div class="step-header" onclick="toggle(5)">
+      <div class="step-num"><span class="num-text">5</span><span class="check">✓</span></div>
+      <div class="step-title-wrap">
+        <div class="step-number-label">Шаг 5</div>
+        <div class="step-title">Подписание ДДУ по квартире</div>
+      </div>
+      <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="step-body">
+      <div class="step-content">
+        <p>После подготовки итогового договора менеджер отправит вам пакет документов для подписания через ЭЦП.</p>
+        <p>Затем документы подписывает представитель застройщика и направляет на регистрацию в Росреестр.</p>
+        <div class="tip">
+          <strong>💳 Расходы</strong>
+          Электронную регистрацию и госпошлину оплачивает застройщик — вам ничего доплачивать не нужно.
+        </div>
+        <button class="done-btn" onclick="markDone(5)">✓ &nbsp;Выполнено</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6 -->
+  <div class="step-card" id="step-6">
+    <div class="step-header" onclick="toggle(6)">
+      <div class="step-num"><span class="num-text">6</span><span class="check">✓</span></div>
+      <div class="step-title-wrap">
+        <div class="step-number-label">Шаг 6</div>
+        <div class="step-title">Подписание ДДУ по паркингу</div>
+      </div>
+      <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="step-body">
+      <div class="step-content">
+        <p>После завершения шага по квартире вам направят отдельный договор на паркинг/кладовую.</p>
+        <p>Процедура аналогична: документы подписываются застройщиком и направляются в Росреестр. Расходы на регистрацию — за застройщиком.</p>
+        <button class="done-btn" onclick="markDone(6)">✓ &nbsp;Выполнено</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7 -->
+  <div class="step-card" id="step-7">
+    <div class="step-header" onclick="toggle(7)">
+      <div class="step-num"><span class="num-text">7</span><span class="check">✓</span></div>
+      <div class="step-title-wrap">
+        <div class="step-number-label">Шаг 7</div>
+        <div class="step-title">Завершение регистрации</div>
+      </div>
+      <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="step-body">
+      <div class="step-content">
+        <p>После регистрации все документы придут на вашу электронную почту. Сохраните их — это правоустанавливающие документы!</p>
+        <div class="tip">
+          <strong>🏦 Раскрытие СБР</strong>
+          Менеджер по сопровождению сделки направит в банк зарегистрированные документы для раскрытия СБР / аккредитива.
+        </div>
+        <div class="tip">
+          <strong>💸 Перевод на эскроу</strong>
+          После проверки документов банк переведёт денежные средства на ваш эскроу счёт.
+        </div>
+        <button class="done-btn" onclick="markDone(7)">✓ &nbsp;Выполнено</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="congrats" id="congrats">
+  <div class="congrats-icon">🎉</div>
+  <h2>Поздравляем с покупкой!</h2>
+  <p>Все этапы сделки успешно завершены. Добро пожаловать в вашу новую жизнь!</p>
+  <p>Вы можете скачать приложение <strong style="color:rgba(255,255,255,0.85);">«Страна»</strong> и следить за ходом строительства.</p>
+</div>
+
+<script>
+  const TOTAL = 7;
+  const state = {};
+
+  function toggle(n) {
+    const card = document.getElementById('step-' + n);
+    const isOpen = card.classList.contains('open');
+    document.querySelectorAll('.step-card').forEach(c => c.classList.remove('open'));
+    if (!isOpen) card.classList.add('open');
+  }
+
+  function markDone(n) {
+    state[n] = !state[n];
+    const card = document.getElementById('step-' + n);
+    card.classList.toggle('done', state[n]);
+    updateProgress();
+    if (state[n]) {
+      setTimeout(() => {
+        card.classList.remove('open');
+        const next = document.getElementById('step-' + (n + 1));
+        if (next && !state[n + 1]) {
+          next.classList.add('open');
+          next.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 350);
+    }
+    const doneCount = Object.values(state).filter(Boolean).length;
+    if (doneCount === TOTAL) {
+      document.getElementById('congrats').classList.add('show');
+      setTimeout(() => document.getElementById('congrats').scrollIntoView({ behavior: 'smooth' }), 400);
+    } else {
+      document.getElementById('congrats').classList.remove('show');
+    }
+  }
+
+  function updateProgress() {
+    const done = Object.values(state).filter(Boolean).length;
+    document.getElementById('progressFill').style.width = (done / TOTAL * 100) + '%';
+    document.getElementById('progressLabel').textContent = done + ' из ' + TOTAL;
+  }
+</script>
+</body>
+</html>
